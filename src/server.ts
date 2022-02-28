@@ -28,10 +28,10 @@ fastify.post('/', async (request, reply) => {
   }
 
   const newfilename = changeExt(part.filename, headers.outfileext);
-  const [filename, result] = await transcode(infile, newfilename, headers.options);
+  const result = await transcode(infile, newfilename, headers.options);
 
-  reply.header('content-disposition', `attachment; filename="${filename.replace('"', '')}"`);
-  reply.send(Buffer.from(result));
+  reply.header('content-disposition', `attachment; filename="${newfilename.replace('"', '')}"`);
+  return reply.send(Buffer.from(result));
 });
 
 fastify.get('/', async () => {

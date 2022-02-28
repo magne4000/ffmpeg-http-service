@@ -7,7 +7,7 @@ export interface FileOption {
   filename: string;
 }
 
-export async function transcode(infile: FileOption, outfilename: string, options: string[] = []): Promise<[string, Uint8Array]> {
+export async function transcode(infile: FileOption, outfilename: string, options: string[] = []): Promise<Uint8Array> {
   if (!ffmpeg.isLoaded()) {
     await ffmpeg.load();
   }
@@ -15,5 +15,11 @@ export async function transcode(infile: FileOption, outfilename: string, options
 
   await ffmpeg.run('-i', infile.filename, ...options, outfilename);
 
-  return [outfilename, ffmpeg.FS('readFile', outfilename)];
+  const buffer = ffmpeg.FS('readFile', outfilename);
+
+  // cleanup MEMFS
+  ffmpeg.FS('unlink', outfilename);
+  ffmpeg.FS('unlink', infile.filename);
+
+  return buffer;
 }
