@@ -1,0 +1,35 @@
+{
+  "name": "ffmpeg-http-service",
+  "version": "1.0.0",
+  "description": "ffmpeg as a service. Send a POST request, get result as a response",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "docker:build": "docker build . -t  magne4000/ffmpeg-http-service",
+    "docker:push": "docker push magne4000/ffmpeg-http-service:latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magne4000/ffmpeg-http-service.git"
+  },
+  "keywords": [
+    "ffmpeg"
+  ],
+  "author": "Joël Charles <joel.charles91@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/magne4000/ffmpeg-http-service/issues"
+  },
+  "homepage": "https://github.com/magne4000/ffmpeg-http-service#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.21",
+    "typescript": "^4.5.5"
+  },
+  "dependencies": {
+    "@ffmpeg/core": "^0.10.0",
+    "@ffmpeg/ffmpeg": "^0.10.1",
+    "fastify": "^3.27.2",
+    "fastify-multipart": "^5.3.1",
+    "ts-node": "^10.5.0"
+  }
+}
