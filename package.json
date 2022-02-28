@@ -1,8 +1,8 @@
 {
   "name": "ffmpeg-http-service",
   "version": "1.0.0",
+  "private": true,
   "description": "ffmpeg as a service. Send a POST request, get result as a response",
-  "main": "index.js",
   "scripts": {
     "start": "ts-node src/server.ts",
     "docker:build": "docker build . -t  magne4000/ffmpeg-http-service",
@@ -13,7 +13,10 @@
     "url": "git+https://github.com/magne4000/ffmpeg-http-service.git"
   },
   "keywords": [
-    "ffmpeg"
+    "ffmpeg",
+    "transcode",
+    "http",
+    "server"
   ],
   "author": "Joël Charles <joel.charles91@gmail.com>",
   "license": "MIT",
