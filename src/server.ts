@@ -1,6 +1,6 @@
 import fastifyFactory from 'fastify';
 import fastifyMultipart from 'fastify-multipart';
-import { FileOption, transcode } from './ffmpeg';
+import { transcode } from './ffmpeg';
 import { extractHeaders } from './headers';
 
 const fastify = fastifyFactory({ logger: true });
@@ -18,20 +18,21 @@ function changeExt(fileName: string, newExt: string) {
   return `${fileRoot}.${newExt}`;
 }
 
-fastify.post('/', async (request, reply) => {
+fastify.post('/', (request, reply) => {
   const headers = extractHeaders(request.headers);
-  const part = await request.file();
+  request.file().then(async part => {
+    if (!part) return reply.send(new Error('No file'));
 
-  const infile: FileOption = {
-    filename: part.filename,
-    binaryData: await part.toBuffer(),
-  }
+    const newfilename = changeExt(part.filename, headers.outfileext);
 
-  const newfilename = changeExt(part.filename, headers.outfileext);
-  const result = await transcode(infile, newfilename, headers.options);
+    reply.raw.writeHead(200, {
+      'Content-disposition': `attachment; filename="${newfilename.replace('"', '')}"`,
+      'Content-Type': 'application/octet-stream'
+    });
 
-  reply.header('content-disposition', `attachment; filename="${newfilename.replace('"', '')}"`);
-  return reply.send(Buffer.from(result));
+    await transcode(part.file, reply.raw, [...headers.options, '-loglevel', 'error',  '-f', headers.outfileext]);
+    reply.raw.end();
+  }).catch(console.error);
 });
 
 fastify.get('/', async () => {

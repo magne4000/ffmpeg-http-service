@@ -25,12 +25,12 @@
   },
   "homepage": "https://github.com/magne4000/ffmpeg-http-service#readme",
   "devDependencies": {
+    "@types/ffmpeg-static": "^3.0.1",
     "@types/node": "^17.0.21",
     "typescript": "^4.5.5"
   },
   "dependencies": {
-    "@ffmpeg/core": "^0.10.0",
-    "@ffmpeg/ffmpeg": "^0.10.1",
+    "ffmpeg-static": "^5.0.0",
     "fastify": "^3.27.2",
     "fastify-multipart": "^5.3.1",
     "ts-node": "^10.5.0"

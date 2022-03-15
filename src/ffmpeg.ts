@@ -1,25 +1,26 @@
-import { createFFmpeg } from '@ffmpeg/ffmpeg';
+import ffmpegPath from 'ffmpeg-static';
+import { spawn } from "child_process";
+import { pipeline, Readable, Writable } from "stream";
 
-const ffmpeg = createFFmpeg({ log: true });
+export function transcode(infile: Readable, tunnel: Writable, options: string[] = []) {
+  const opts = ['-i', '-', ...options, '-'];
+  console.log('running', ffmpegPath, ...opts);
+  const ffmpeg = spawn(ffmpegPath, opts, { stdio: ['pipe', 'pipe', process.stderr] });
 
-export interface FileOption {
-  binaryData: Uint8Array;
-  filename: string;
-}
+  pipeline(infile, ffmpeg.stdin, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
-export async function transcode(infile: FileOption, outfilename: string, options: string[] = []): Promise<Uint8Array> {
-  if (!ffmpeg.isLoaded()) {
-    await ffmpeg.load();
-  }
-  ffmpeg.FS('writeFile', infile.filename, infile.binaryData);
+  pipeline(ffmpeg.stdout, tunnel, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
-  await ffmpeg.run('-i', infile.filename, ...options, outfilename);
-
-  const buffer = ffmpeg.FS('readFile', outfilename);
-
-  // cleanup MEMFS
-  ffmpeg.FS('unlink', outfilename);
-  ffmpeg.FS('unlink', infile.filename);
-
-  return buffer;
+  return new Promise<number | null>((resolve, reject) => {
+    ffmpeg.on('error', reject);
+    ffmpeg.on('close', resolve);
+  });
 }

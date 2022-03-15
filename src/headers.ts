@@ -1,6 +1,8 @@
 import { IncomingHttpHeaders } from 'http';
 
 export function extractHeaders(headers: IncomingHttpHeaders) {
+  if (typeof headers !== 'object') throw new Error('Invalid headers');
+
   const rawOptions = headers['ffmpeg-options'];
   let options: string[] = [];
 
