@@ -26,7 +26,7 @@ fastify.post('/', (request, reply) => {
     const newfilename = changeExt(part.filename, headers.outfileext);
 
     reply.raw.writeHead(200, {
-      'Content-disposition': `attachment; filename="${newfilename.replace('"', '')}"`,
+      'Content-disposition': `attachment; filename="${encodeURI(newfilename.replace('"', ''))}"; filename*=UTF-8''${encodeURI(newfilename)}`,
       'Content-Type': 'application/octet-stream'
     });
 
